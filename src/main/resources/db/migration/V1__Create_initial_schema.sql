@@ -1,0 +1,52 @@
+create table products(
+    id bigint auto_increment primary key,
+    name varchar(255) not null,
+    description text,
+    price decimal(15,2) not null,
+    stock int default 0,
+    category enum(
+        'ALIMENTOS_E_BEBIDAS',
+                'MODA',
+                'ELETRONICOS',
+                'BELEZA_E_CUIDADOS_PESSOAIS',
+                'CASA_E_COZINHA',
+                'ESPORTES_E_LAZER',
+                'LIVROS',
+                'BRINQUEDOS_E_JOGOS',
+                'FERRAMENTAS_E_JARDIM',
+                'AUTOMOTIVO',
+                'INFORMATICA',
+                'SAUDE_E_BEM_ESTAR',
+                'MOVEIS',
+                'DECORACAO',
+                'PETS',
+                'VIAGEM',
+                'JARDINAGEM',
+                'ARTIGOS_DE_FESTA',
+                'INSTRUMENTOS_MUSICAIS',
+                'ARTESANATO'
+    ) not null,
+    SKU VARCHAR(50) UNIQUE,
+    brand VARCHAR(255),
+    img_url VARCHAR(255),
+    weight DOUBLE,
+    dimensions DOUBLE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(11),
+    is_active BOOLEAN DEFAULT TRUE,
+    email_verified BOOLEAN DEFAULT FALSE,
+    reset_password_token VARCHAR(255),
+    last_login DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    role ENUM('CUSTOMER', 'ADMIN') NOT NULL
+);
