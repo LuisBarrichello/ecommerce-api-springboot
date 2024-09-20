@@ -1,15 +1,17 @@
 package com.luisbarrichello.api.ecommerce.service.product;
 
-import com.luisbarrichello.api.ecommerce.dto.product.ProductCreateDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductResponseDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductSummaryListDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductUpdateDTO;
+import com.luisbarrichello.api.ecommerce.dto.product.*;
 import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
+import com.luisbarrichello.api.ecommerce.repository.product.ProductSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -55,5 +57,25 @@ public class ProductService {
         } else {
             throw new EntityNotFoundException("Produto não encontrado.");
         }
+    }
+
+    public Page<ProductResponseDTO> searchProducts(ProductSearchDTO productSearchDTO, Pageable pageable) {
+        Specification<Product> specification = Specification.
+                where(ProductSpecification.hasName(productSearchDTO.name()))
+                .and(ProductSpecification.hasCategory(productSearchDTO.category()))
+                .and(ProductSpecification.hasBrand(productSearchDTO.brand()))
+                .and(ProductSpecification.hasPriceBetween(productSearchDTO.minPrice(), productSearchDTO.maxPrice()))
+                .and(ProductSpecification.isPopular(productSearchDTO.ascending()));
+
+        if (productSearchDTO.sortBy() != null) {
+            Sort sort =
+                    productSearchDTO.ascending() ?
+                            Sort.by(productSearchDTO.sortBy()).ascending() :
+                            Sort.by(productSearchDTO.sortBy()).descending();
+
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        }
+
+        return productRepository.findAll(specification, pageable).map(ProductResponseDTO::new);
     }
 }

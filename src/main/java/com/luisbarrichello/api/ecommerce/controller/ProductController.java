@@ -1,9 +1,6 @@
 package com.luisbarrichello.api.ecommerce.controller;
 
-import com.luisbarrichello.api.ecommerce.dto.product.ProductCreateDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductResponseDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductSummaryListDTO;
-import com.luisbarrichello.api.ecommerce.dto.product.ProductUpdateDTO;
+import com.luisbarrichello.api.ecommerce.dto.product.*;
 import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
 import com.luisbarrichello.api.ecommerce.service.product.ProductService;
@@ -32,7 +29,10 @@ public class ProductController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<ProductResponseDTO> registerProduct(@RequestBody @Valid ProductCreateDTO productCreateDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<ProductResponseDTO> registerProduct(
+            @RequestBody @Valid ProductCreateDTO productCreateDTO,
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
         Product product = productService.createProduct(productCreateDTO);
         URI uri = uriComponentsBuilder.path("products/{id}").buildAndExpand(product.getId()).toUri();
         return ResponseEntity.created(uri).body(new ProductResponseDTO(product));
@@ -53,7 +53,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductUpdateDTO productUpdateDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProduct(
+            @PathVariable Long id,
+            @RequestBody @Valid ProductUpdateDTO productUpdateDTO
+    ) {
         ProductResponseDTO product = productService.updateProduct(id, productUpdateDTO);
         return ResponseEntity.ok(product);
     }
@@ -62,5 +65,14 @@ public class ProductController {
     public ResponseEntity deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductResponseDTO>> searchProducts(
+            @PageableDefault Pageable pageable,
+            ProductSearchDTO productSearchDTO
+    ) {
+        Page<ProductResponseDTO> products = productService.searchProducts(productSearchDTO, pageable);
+        return ResponseEntity.ok(products);
     }
 }

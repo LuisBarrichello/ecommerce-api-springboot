@@ -44,6 +44,7 @@ public class Product {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer salesCount;
 
     public Product(ProductCreateDTO productCreateDTO) {
         this.name = productCreateDTO.name();
@@ -168,5 +169,9 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getSalesCount() {
+        return salesCount;
     }
 }

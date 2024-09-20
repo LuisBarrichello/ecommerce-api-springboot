@@ -1,7 +1,9 @@
 package com.luisbarrichello.api.ecommerce.model.user;
 
 
+import com.luisbarrichello.api.ecommerce.dto.user.UserCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.address.Address;
+import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,6 +43,23 @@ public class User {
     private LocalDateTime lastLogin;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "shopping_cart_id")
+    private ShoppingCart shoppingCart;
+
+    public User(UserCreateDTO userCreateDTO) {
+        this.name = userCreateDTO.name();
+        this.email = userCreateDTO.email();
+        this.password = userCreateDTO.password();
+        this.username = userCreateDTO.username();
+        this.phoneNumber = userCreateDTO.phoneNumber();
+        this.role = userCreateDTO.role();
+        this.address = userCreateDTO.address();
+        this.isActive = true;
+        this.emailVerified = false;
+        this.createAt = LocalDateTime.now();
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -128,5 +147,41 @@ public class User {
 
     public void setAddress(List<Address> address) {
         this.address = address;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
+    }
+
+    public void setRole(RoleUser role) {
+        this.role = role;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

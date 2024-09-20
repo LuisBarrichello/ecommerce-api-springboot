@@ -16,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/users")
@@ -28,13 +29,10 @@ public class UserController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity registerUser(@RequestBody @Valid UserCreateDTO userCreateDTO, UriBuilder uriBuilder) {
-        return null;
-//        User user = userService.createUser(userCreateDTO);
-//        userRepository.save(user);
-//
-//        var uri = uriBuilder.path("users/{id}").buildAndExpand(user.getId()).toUri();
-//        return ResponseEntity.created(uri).body(new UserResponseDTO(user));
+    public ResponseEntity registerUser(@RequestBody @Valid UserCreateDTO userCreateDTO, UriComponentsBuilder uriBuilder) {
+        User user = userService.createUser(userCreateDTO);
+        var uri = uriBuilder.path("users/{id}").buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uri).body(new UserResponseDTO(user));
     }
 
     @GetMapping("/{id}")
@@ -46,7 +44,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> listUsers(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<UserResponseDTO>> listAllUsers(@PageableDefault Pageable pageable) {
         Page<UserResponseDTO> users = userRepository.findAll(pageable).map(UserResponseDTO::new);
         return ResponseEntity.ok(users);
     }
@@ -54,17 +52,15 @@ public class UserController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity updateUser(@PathVariable @Valid Long id, @RequestBody UserUpdateDTO userUpdateDTO) {
-        return null;
-//        User user = userService.updateUser(userUpdateDTO, id);
-//        return ResponseEntity.ok(new UserResponseDTO)
+        User user = userService.updateUser(userUpdateDTO, id);
+        return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deleteUser(@PathVariable @Valid Long id) {
-        return null;
-//        userService.deleteUser(id);
-//        return ResponseEntity.noContent().build();
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
