@@ -2,8 +2,10 @@ package com.luisbarrichello.api.ecommerce.service.user;
 
 import com.luisbarrichello.api.ecommerce.dto.user.UserCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.user.UserUpdateDTO;
+import com.luisbarrichello.api.ecommerce.model.role.Role;
 import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
 import com.luisbarrichello.api.ecommerce.model.user.User;
+import com.luisbarrichello.api.ecommerce.repository.role.RoleRepository;
 import com.luisbarrichello.api.ecommerce.repository.shoppingCart.ShoppingCartRepository;
 import com.luisbarrichello.api.ecommerce.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,10 +19,14 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
     ShoppingCartRepository shoppingCartRepository;
 
     public User createUser(UserCreateDTO userCreateDTO) {
-        User user = new User(userCreateDTO);
+        Role role = getRole(userCreateDTO.roleId());
+        User user = new User(userCreateDTO, role);
         checkDuplicityOfEmail(user);
         getShoppingCart(user);
         userRepository.save(user);
@@ -59,5 +65,10 @@ public class UserService {
         shoppingCartRepository.save(shoppingCart);
 
         user.setShoppingCart(shoppingCart);
+    }
+
+    public Role getRole(Long roleId) {
+        Role role = roleRepository.getReferenceById(roleId);
+        return role;
     }
 }

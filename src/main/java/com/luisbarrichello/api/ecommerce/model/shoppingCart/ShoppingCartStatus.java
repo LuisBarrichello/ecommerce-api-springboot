@@ -4,5 +4,7 @@ public enum ShoppingCartStatus {
     ACTIVE,
     COMPLETED,
     CANCELED,
-    PENDING_PAYMENT
+    PENDING_PAYMENT,
+    SHIPPED,
+    DELIVERED
 }

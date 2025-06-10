@@ -26,7 +26,7 @@ public record ShoppingCartResponseDTO(
                 shoppingCart.getTaxes(),
                 shoppingCart.getShipping(),
                 shoppingCart.getStatus(),
-                shoppingCart.getPaymentMethod(),
+                shoppingCart.getPaymentMethod().toString(),
                 shoppingCart.getPriceTotalFinal(),
                 shoppingCart.getCartItems()
                         .stream()

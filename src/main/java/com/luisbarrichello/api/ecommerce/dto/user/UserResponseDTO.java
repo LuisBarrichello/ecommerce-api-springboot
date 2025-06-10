@@ -5,13 +5,15 @@ import com.luisbarrichello.api.ecommerce.model.user.User;
 public record UserResponseDTO(
         Long id,
         String name,
-        String phoneNumber,
+        String email,
+        String username,
         Boolean isActive
 ) {
     public UserResponseDTO(User user) {
         this(user.getId(),
                 user.getName(),
-                user.getPhoneNumber(),
+                user.getEmail(),
+                user.getUsername(),
                 user.getActive());
     }
 }

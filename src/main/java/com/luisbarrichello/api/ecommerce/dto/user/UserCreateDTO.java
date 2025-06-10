@@ -1,6 +1,7 @@
 package com.luisbarrichello.api.ecommerce.dto.user;
 
 import com.luisbarrichello.api.ecommerce.model.address.Address;
+import com.luisbarrichello.api.ecommerce.model.role.Role;
 import com.luisbarrichello.api.ecommerce.model.user.RoleUser;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public record UserCreateDTO(
         String password,
         String username,
         String phoneNumber,
-        RoleUser role,
+        Long roleId,
         List<Address> address
 ) {
 }

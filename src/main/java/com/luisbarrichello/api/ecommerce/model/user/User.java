@@ -1,14 +1,17 @@
 package com.luisbarrichello.api.ecommerce.model.user;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.luisbarrichello.api.ecommerce.dto.user.UserCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.address.Address;
+import com.luisbarrichello.api.ecommerce.model.role.Role;
 import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CollectionId;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,37 +27,55 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(length = 11)
     private String phoneNumber;
 
     private Boolean isActive;
     private Boolean emailVerified;
+
     private String resetPasswordToken;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> address;
 
-    @Enumerated(EnumType.STRING)
-    private RoleUser role;
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     private LocalDateTime lastLogin;
+
+    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createAt;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateAt;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "shopping_cart_id")
     private ShoppingCart shoppingCart;
 
-    public User(UserCreateDTO userCreateDTO) {
+    public User(UserCreateDTO userCreateDTO, Role role) {
         this.name = userCreateDTO.name();
         this.email = userCreateDTO.email();
         this.password = userCreateDTO.password();
         this.username = userCreateDTO.username();
         this.phoneNumber = userCreateDTO.phoneNumber();
-        this.role = userCreateDTO.role();
+        this.role = role;
         this.address = userCreateDTO.address();
         this.isActive = true;
         this.emailVerified = false;
@@ -101,7 +122,7 @@ public class User {
         return lastLogin;
     }
 
-    public RoleUser getRole() {
+    public Role getRole() {
         return role;
     }
 
@@ -157,7 +178,7 @@ public class User {
         this.shoppingCart = shoppingCart;
     }
 
-    public void setRole(RoleUser role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

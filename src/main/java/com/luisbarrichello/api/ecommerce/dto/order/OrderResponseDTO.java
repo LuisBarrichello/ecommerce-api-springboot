@@ -1,10 +1,9 @@
 package com.luisbarrichello.api.ecommerce.dto.order;
 
+import com.luisbarrichello.api.ecommerce.dto.orderItem.OrderItemCreateDTO;
+import com.luisbarrichello.api.ecommerce.dto.user.UserResponseDTO;
 import com.luisbarrichello.api.ecommerce.model.order.Order;
-import com.luisbarrichello.api.ecommerce.model.orderItem.OrderItem;
-import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.model.shoppingCart.Discount;
-import com.luisbarrichello.api.ecommerce.model.user.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,8 +11,8 @@ import java.util.List;
 
 public record OrderResponseDTO(
         Long id,
-        User user,
-        List<OrderItem> productList,
+        UserResponseDTO user,
+        List<OrderItemCreateDTO.OrderItemResponseDTO> productList,
         Discount discount,
         BigDecimal priceTotal,
         String paymentMethod,
@@ -29,11 +28,11 @@ public record OrderResponseDTO(
     public OrderResponseDTO(Order order) {
         this(
                 order.getId(),
-                order.getUser(),
-                order.getOrderItems(),
+                new UserResponseDTO(order.getUser()),
+                order.getOrderItems().stream().map(OrderItemCreateDTO.OrderItemResponseDTO::new).toList(),
                 order.getDiscount(),
                 order.getPriceTotal(),
-                order.getPaymentMethod(),
+                order.getPaymentMethod().toString(),
                 order.getTrackingCode(),
                 order.getTaxes(),
                 order.getDeliveryDate(),

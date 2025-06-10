@@ -1,6 +1,8 @@
 package com.luisbarrichello.api.ecommerce.model.shoppingCart;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.luisbarrichello.api.ecommerce.model.cartItem.CartItem;
+import com.luisbarrichello.api.ecommerce.model.paymentMethod.PaymentMethod;
 import com.luisbarrichello.api.ecommerce.model.user.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -38,12 +40,14 @@ public class ShoppingCart {
     private Discount discount;
 
     private BigDecimal taxes;
-
     private BigDecimal shipping;
 
+    @Enumerated(EnumType.STRING)
     private ShoppingCartStatus status;
 
-    private String paymentMethod;
+    @ManyToOne
+    @JoinColumn(name = "payment_method")
+    private PaymentMethod paymentMethod;
 
     private BigDecimal priceTotalFinal;
 
@@ -102,7 +106,7 @@ public class ShoppingCart {
         return priceTotalFinal;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
@@ -138,7 +142,7 @@ public class ShoppingCart {
         return status;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
