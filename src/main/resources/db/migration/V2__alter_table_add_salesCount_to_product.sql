@@ -1,1 +1,0 @@
-alter table products add column sales_count int default 0;
