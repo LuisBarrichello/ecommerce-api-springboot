@@ -1,7 +1,9 @@
 package com.luisbarrichello.api.ecommerce.model.paymentMethod;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "payment_methods")
 public class PaymentMethod {

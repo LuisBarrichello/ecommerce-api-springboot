@@ -47,10 +47,9 @@ public class OrderService {
 
     public Order getOrder(Long userId, Long orderId) {
         List<Order> orders = orderRepository.findByUserId(userId);
-        Order order = orders.stream()
-                .filter(order1 -> order1.getId() == orderId).findFirst()
+        return orders.stream()
+                .filter(order1 -> order1.getId().equals(orderId)).findFirst()
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        return order;
     }
 
     public Page<OrderResponseDTO> getAllOrdersByUser(Pageable pageable, Long userId) {
@@ -77,20 +76,14 @@ public class OrderService {
             var productInStock = checkProductStock(item);
             if(!productInStock) {
                 throw new ValidationException("Product " + item.productName() + " out of stock");
-            } else {
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean checkProductStock(OrderItemCreateDTO item) {
         Product product = productRepository.getReferenceById(item.productId());
-        if(product.getStock() >= item.quantity()) {
-            return true;
-        } else {
-            return false;
-        }
+        return product.getStock() >= item.quantity();
     }
 
     public void setOrderItems(Order order, OrderCreateDTO orderCreateDTO) {
