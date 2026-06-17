@@ -32,6 +32,13 @@ public class ShoppingCartService {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+    public void createShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
+        user.setShoppingCart(shoppingCart);
+    }
+
     public ShoppingCart findShoppingCartByUserid(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));;
         ShoppingCart shoppingCart = user.getShoppingCart();
@@ -79,7 +86,7 @@ public class ShoppingCartService {
                 .orElseThrow(() -> new RuntimeException("Item not found in the cart"));
 
 
-        int newQuantity = itemToUpdate.getQuantity() + cartItemUpdateDTO.quantity();
+        int newQuantity = cartItemUpdateDTO.quantity();
         if (newQuantity <= 0) {
             cartItems.remove(itemToUpdate);
         } else {
@@ -88,8 +95,7 @@ public class ShoppingCartService {
 
         shoppingCart.recalculateTotals();
         cartItemRepository.save(itemToUpdate);
-
-
+        shoppingCartRepository.save(shoppingCart);
         return shoppingCart;
     }
 
@@ -142,7 +148,7 @@ public class ShoppingCartService {
 //        User user = userRepository.findById(userId)
 //                .orElseThrow(() -> new RuntimeException("User not found"));
 //
-//        ShoppingCart shoppingCart = user.getShoppingCart();
+//        ShoppingCart shoppingCart = user.createShoppingCart();
 //        List<CartItem> cartItems = shoppingCart.getCartItems();
 //        CartItem item = cartItems.stream()
 //                .filter(cartItem -> cartItem.getId().equals(dto.id()))
