@@ -35,11 +35,12 @@ public class AuthenticationService {
     public User authenticate(LoginUserDTO input) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                    input.email(),
+                    input.login(),
                     input.password()
             )
         );
-        return userRepository.findByEmail(input.email())
+        return userRepository.findByEmail(input.login())
+                .or(() -> userRepository.findByUsername(input.login()))
                 .orElseThrow(() -> new RuntimeException("User not found after authentication!"));
     }
 }

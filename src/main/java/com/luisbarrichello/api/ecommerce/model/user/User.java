@@ -91,6 +91,7 @@ public class User implements UserDetails {
     @PrePersist
     protected void onCreate() {
         createAt = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
         isActive = true;
         emailVerified = false;
     }

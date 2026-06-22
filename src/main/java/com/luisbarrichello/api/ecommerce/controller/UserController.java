@@ -17,10 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -30,14 +26,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @PostMapping("/register")
-    @Transactional
-    public ResponseEntity registerUser(@RequestBody @Valid UserCreateDTO userCreateDTO, UriComponentsBuilder uriBuilder) {
-        User user = userService.createUser(userCreateDTO);
-        var uri = uriBuilder.path("users/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).body(new UserResponseDTO(user));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity getUser(@PathVariable @Valid Long id) {

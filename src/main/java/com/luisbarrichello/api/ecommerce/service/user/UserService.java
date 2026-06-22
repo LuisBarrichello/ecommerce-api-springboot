@@ -43,8 +43,7 @@ public class UserService {
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);
-        ShoppingCartService cartService = new ShoppingCartService();
-        cartService.createShoppingCart(user);
+        shoppingCartService.createShoppingCart(user);
         return user;
     }
 
