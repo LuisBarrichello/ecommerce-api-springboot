@@ -7,6 +7,7 @@ import com.luisbarrichello.api.ecommerce.dto.user.UserResponseDTO;
 import com.luisbarrichello.api.ecommerce.model.user.User;
 import com.luisbarrichello.api.ecommerce.service.auth.AuthenticationService;
 import com.luisbarrichello.api.ecommerce.service.jwt.JwtService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,14 +30,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody UserCreateDTO userCreateDTO) throws IllegalAccessException {
+    public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid UserCreateDTO userCreateDTO) throws IllegalAccessException {
         User registeredUser = authenticationService.signup(userCreateDTO);
         UserResponseDTO userResponseDTO = new UserResponseDTO(registeredUser);
         return ResponseEntity.ok(userResponseDTO);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody LoginUserDTO loginUserDTO) {
+    public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody @Valid LoginUserDTO loginUserDTO) {
         User authenticatedUser = authenticationService.authenticate(loginUserDTO);
 
         String token = jwtService.generateToken(authenticatedUser);

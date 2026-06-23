@@ -6,7 +6,7 @@ import com.luisbarrichello.api.ecommerce.model.order.Order;
 import com.luisbarrichello.api.ecommerce.repository.order.OrderRepository;
 import com.luisbarrichello.api.ecommerce.service.order.OrderService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,17 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
+@RequiredArgsConstructor
 public class OrderController {
-    @Autowired
-    OrderRepository orderRepository;
 
-    @Autowired
-    OrderService orderService;
+    private final OrderRepository orderRepository;
+
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody @Valid OrderCreateDTO orderCreateDTO,

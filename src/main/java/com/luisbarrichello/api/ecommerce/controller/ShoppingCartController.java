@@ -1,23 +1,22 @@
 package com.luisbarrichello.api.ecommerce.controller;
 
+import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemUpdateDTO;
 import com.luisbarrichello.api.ecommerce.dto.shoppingCart.ShoppingCartResponseDTO;
-import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
 import com.luisbarrichello.api.ecommerce.repository.shoppingCart.ShoppingCartRepository;
 import com.luisbarrichello.api.ecommerce.service.shoppingCart.ShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shoppingcart")
+@RequiredArgsConstructor
 public class ShoppingCartController {
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+    private final ShoppingCartService shoppingCartService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<ShoppingCartResponseDTO> getShoppingCart(@PathVariable Long userId) {

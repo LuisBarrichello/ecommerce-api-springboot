@@ -6,7 +6,7 @@ import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
 import com.luisbarrichello.api.ecommerce.service.product.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,13 +19,12 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
     @Transactional
