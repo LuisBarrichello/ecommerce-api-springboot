@@ -1,8 +1,8 @@
 package com.luisbarrichello.api.ecommerce.service.order;
 
-import com.luisbarrichello.api.ecommerce.dto.orderItem.OrderItemCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.order.OrderCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.order.OrderResponseDTO;
+import com.luisbarrichello.api.ecommerce.dto.orderItem.OrderItemCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.order.Order;
 import com.luisbarrichello.api.ecommerce.model.order.OrderStatus;
 import com.luisbarrichello.api.ecommerce.model.orderItem.OrderItem;
@@ -15,36 +15,35 @@ import com.luisbarrichello.api.ecommerce.repository.paymentMethodRepository.Paym
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
 import com.luisbarrichello.api.ecommerce.repository.user.UserRepository;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
-    @Autowired
-    OrderRepository orderRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    PaymentMethodRepository paymentMethodRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
+
+    private final OrderItemRepository orderItemRepository;
 
     public Order updateOrderStatus(Long orderId, OrderStatus status) {
         // Lógica para atualizar status do pedido
         return null;
     }
 
+    @Transactional(readOnly = true)
     public Order getOrder(Long userId, Long orderId) {
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream()
@@ -52,11 +51,13 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
+    @Transactional(readOnly = true)
     public Page<OrderResponseDTO> getAllOrdersByUser(Pageable pageable, Long userId) {
         Page<Order> ordersPage = orderRepository.findByUserId(userId, pageable);
         return ordersPage.map(OrderResponseDTO::new);
     }
 
+    @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
         User user = userRepository.findById(orderCreateDTO.userId())
                 .orElseThrow(() -> new ValidationException("User not found!"));
@@ -86,7 +87,7 @@ public class OrderService {
         return product.getStock() >= item.quantity();
     }
 
-    public void setOrderItems(Order order, OrderCreateDTO orderCreateDTO) {
+    private void setOrderItems(Order order, OrderCreateDTO orderCreateDTO) {
         List<OrderItem> orderItems = new ArrayList<>();
         for (OrderItemCreateDTO itemDTO : orderCreateDTO.productList()) {
             Product product = productRepository.findById(itemDTO.productId())
@@ -102,6 +103,7 @@ public class OrderService {
         order.setOrderItems(orderItems);
     }
 
+    @Transactional
     public void deleteOrder(Long userId, Long orderId) {
         Order order = getOrder(userId, orderId);
         orderRepository.deleteById(order.getId());

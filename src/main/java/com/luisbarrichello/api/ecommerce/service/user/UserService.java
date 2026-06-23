@@ -3,35 +3,30 @@ package com.luisbarrichello.api.ecommerce.service.user;
 import com.luisbarrichello.api.ecommerce.dto.user.UserCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.user.UserUpdateDTO;
 import com.luisbarrichello.api.ecommerce.model.role.Role;
-import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
 import com.luisbarrichello.api.ecommerce.model.user.User;
 import com.luisbarrichello.api.ecommerce.repository.role.RoleRepository;
 import com.luisbarrichello.api.ecommerce.repository.shoppingCart.ShoppingCartRepository;
 import com.luisbarrichello.api.ecommerce.repository.user.UserRepository;
 import com.luisbarrichello.api.ecommerce.service.shoppingCart.ShoppingCartService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    ShoppingCartService shoppingCartService;
+    private final ShoppingCartService shoppingCartService;
 
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
@@ -53,6 +48,7 @@ public class UserService {
         return false;
     }
 
+    @Transactional
     public User updateUser(UserUpdateDTO userUpdateDTO, Long id) {
         User user = userRepository.getReferenceById(id);
 
@@ -64,6 +60,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         var user = userRepository.findById(id);
         if (user.isPresent()) {

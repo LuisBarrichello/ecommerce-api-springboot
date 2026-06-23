@@ -5,19 +5,21 @@ import com.luisbarrichello.api.ecommerce.model.cartItem.CartItem;
 import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.repository.cartItem.CartItemRepository;
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Service
+@RequiredArgsConstructor
 public class CartItemService {
-    @Autowired
-    ProductRepository productRepository;
 
-    @Autowired
-    CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
 
+    private final CartItemRepository cartItemRepository;
+
+    @Transactional
     public CartItem createItem(CartItemCreateDTO cartItemCreateDTO) {
         Product product = productRepository.findById(cartItemCreateDTO.productId())
         .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -31,7 +33,6 @@ public class CartItemService {
 
         return cartItem;
     }
-
 
     public BigDecimal calculatePriceTotalTheEqualItems(Product product, CartItemCreateDTO cartItemCreateDTO) {
         BigDecimal total = product

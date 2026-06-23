@@ -1,37 +1,33 @@
 package com.luisbarrichello.api.ecommerce.service.shoppingCart;
 
 import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemCreateDTO;
-import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemResponseDTO;
 import com.luisbarrichello.api.ecommerce.dto.cartItem.CartItemUpdateDTO;
 import com.luisbarrichello.api.ecommerce.model.cartItem.CartItem;
 import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCart;
-import com.luisbarrichello.api.ecommerce.model.shoppingCart.ShoppingCartStatus;
 import com.luisbarrichello.api.ecommerce.model.user.User;
 import com.luisbarrichello.api.ecommerce.repository.cartItem.CartItemRepository;
 import com.luisbarrichello.api.ecommerce.repository.shoppingCart.ShoppingCartRepository;
 import com.luisbarrichello.api.ecommerce.repository.user.UserRepository;
 import com.luisbarrichello.api.ecommerce.service.cartItem.CartItemService;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ShoppingCartService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
-    @Autowired
-    private CartItemService cartItemService;
+    private final CartItemService cartItemService;
 
-    @Autowired
-    private CartItemRepository cartItemRepository;
+    private final CartItemRepository cartItemRepository;
 
+    @Transactional
     public void createShoppingCart(User user) {
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUser(user);
@@ -39,6 +35,7 @@ public class ShoppingCartService {
         user.setShoppingCart(shoppingCart);
     }
 
+    @Transactional(readOnly = true)
     public ShoppingCart findShoppingCartByUserid(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));;
         ShoppingCart shoppingCart = user.getShoppingCart();
@@ -50,6 +47,7 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
+    @Transactional
     public ShoppingCart addItemToCart(Long userId, CartItemCreateDTO cartItemCreateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -74,6 +72,7 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
+    @Transactional
     public ShoppingCart updateItemQuantity(Long userId, CartItemUpdateDTO cartItemUpdateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -99,6 +98,7 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
+    @Transactional
     public ShoppingCart removeItemFromCart(Long userId, Long itemId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -118,6 +118,7 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
+    @Transactional
     public ShoppingCart clearCart(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

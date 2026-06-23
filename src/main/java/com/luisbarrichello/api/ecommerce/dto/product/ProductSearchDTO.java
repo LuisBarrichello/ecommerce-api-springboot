@@ -12,6 +12,7 @@ public record ProductSearchDTO(
         String brand,
         String sortBy,
         Boolean ascending,
-        Integer salesCount
+        Integer salesCount,
+        Boolean popular
 ) {
 }
