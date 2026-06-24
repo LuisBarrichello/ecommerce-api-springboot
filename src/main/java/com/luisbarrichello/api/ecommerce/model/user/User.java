@@ -1,7 +1,6 @@
 package com.luisbarrichello.api.ecommerce.model.user;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.luisbarrichello.api.ecommerce.dto.user.UserCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.address.Address;
 import com.luisbarrichello.api.ecommerce.model.role.Role;
@@ -11,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CollectionId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
