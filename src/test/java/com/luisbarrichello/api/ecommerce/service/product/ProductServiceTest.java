@@ -2,10 +2,12 @@ package com.luisbarrichello.api.ecommerce.service.product;
 
 import com.luisbarrichello.api.ecommerce.dto.product.ProductCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.product.ProductResponseDTO;
+import com.luisbarrichello.api.ecommerce.dto.product.ProductSummaryListDTO;
 import com.luisbarrichello.api.ecommerce.dto.product.ProductUpdateDTO;
 import com.luisbarrichello.api.ecommerce.model.category.Category;
 import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
+import com.luisbarrichello.api.ecommerce.util.builder.ProductBuilder;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,5 +94,24 @@ public class ProductServiceTest {
         Assertions.assertEquals("Novo nome", result.name());
 
         Mockito.verify(productRepository, Mockito.times(1)).save(oldProduct);
+    }
+
+    @Test
+    void listAllProductsTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Product product = new ProductBuilder().build();
+        Page<Product> pageProducts = new PageImpl<>(List.of(product));
+
+        Mockito.when(
+                productRepository
+                        .findAll(pageable))
+                .thenReturn(pageProducts);
+
+        Page<ProductSummaryListDTO> result = productService.listAllProducts(pageable);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.getTotalElements());
+        Assertions.assertEquals(product.getName(), result.getContent().getFirst().name());
     }
 }

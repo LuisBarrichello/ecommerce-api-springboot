@@ -47,7 +47,7 @@ public class ProductService {
     }
 
     public Page<ProductSummaryListDTO> listAllProducts(Pageable pageable) {
-        Page<ProductSummaryListDTO> products = productRepository.findAll(pageable).map(ProductSummaryListDTO::new);
+            Page<ProductSummaryListDTO> products = productRepository.findAll(pageable).map(ProductSummaryListDTO::new);
         return products;
     }
 
