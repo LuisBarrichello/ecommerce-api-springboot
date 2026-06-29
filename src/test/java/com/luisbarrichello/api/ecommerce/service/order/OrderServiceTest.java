@@ -3,6 +3,7 @@ package com.luisbarrichello.api.ecommerce.service.order;
 import com.luisbarrichello.api.ecommerce.dto.order.OrderCreateDTO;
 import com.luisbarrichello.api.ecommerce.dto.orderItem.OrderItemCreateDTO;
 import com.luisbarrichello.api.ecommerce.model.order.Order;
+import com.luisbarrichello.api.ecommerce.model.order.OrderStatus;
 import com.luisbarrichello.api.ecommerce.model.paymentMethod.PaymentMethod;
 import com.luisbarrichello.api.ecommerce.model.product.Product;
 import com.luisbarrichello.api.ecommerce.model.user.User;
@@ -11,6 +12,7 @@ import com.luisbarrichello.api.ecommerce.repository.paymentMethodRepository.Paym
 import com.luisbarrichello.api.ecommerce.repository.product.ProductRepository;
 import com.luisbarrichello.api.ecommerce.repository.user.UserRepository;
 import com.luisbarrichello.api.ecommerce.util.builder.OrderBuilder;
+import com.luisbarrichello.api.ecommerce.util.builder.PaymentMethodBuilder;
 import com.luisbarrichello.api.ecommerce.util.builder.ProductBuilder;
 import com.luisbarrichello.api.ecommerce.util.builder.UserBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,17 +69,40 @@ class OrderServiceTest {
 
 
     @Test
-    void createOrder() {
+    void createOrderSuccess() {
         User user = new UserBuilder().build();
-        Order order = new OrderBuilder().build();
+        PaymentMethod paymentMethod = new PaymentMethodBuilder().build();
+        Product product = new ProductBuilder().build();
 
-        when(userRepository.findById(order.getUser().getId())).thenReturn(Optional.of(user));
-        when(paymentMethodRepository.findById(order.getPaymentMethod())).thenReturn(Optional.of(PaymentMethod.class));
+        OrderItemCreateDTO orderItemDTO = new OrderItemCreateDTO(
+                product.getId(), "Celular", BigDecimal.valueOf(1500), 2
+        );
 
-        Order
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO(
+                user.getId(),
+                List.of(orderItemDTO),
+                null,
+                OrderStatus.PENDING_PAYMENT,
+                paymentMethod.getId(),
+                "TRACK-1234",
+                BigDecimal.ZERO, // taxes
+                LocalDateTime.now().plusDays(5),
+                LocalDateTime.now().plusDays(7),
+                LocalDateTime.now().plusDays(1),
+                null,
+                BigDecimal.valueOf(20),
+                LocalDateTime.now()
+        );
 
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(paymentMethodRepository.findById(paymentMethod.getId())).thenReturn(Optional.of(paymentMethod));
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
+        Order result = orderService.createOrder(orderCreateDTO);
 
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(result.getUser(), user.getId());
+        Mockito.verify(orderRepository, Mockito.times(1)).save(Mockito.any(Order.class));
     }
 
     @Test
