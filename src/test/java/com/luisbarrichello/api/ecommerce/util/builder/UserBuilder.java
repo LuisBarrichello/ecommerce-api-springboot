@@ -22,6 +22,16 @@ public class UserBuilder {
         return this;
     }
 
+    public UserBuilder withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public UserBuilder withRole(Role role) {
+        this.role = role;
+        return this;
+    }
+
     public User build() {
         User user = new User();
         user.setId(this.id);
